@@ -1,0 +1,4 @@
+<!-- product list: read from ProductService.productItems signal -->
+@for (product of productService.productItems(); track product.id) {
+    <p>{{ product.title }}</p>
+}

@@ -1,0 +1,23 @@
+<header>
+   <nav>
+         <div class="left">
+            <select (change)="onCategoryChange($event)" aria-label="Filter products by category">
+               <option value="">All</option>
+               @for (cat of categories(); track cat) {
+                  <option value="{{ cat }}">{{ cat }}</option>
+               }
+            </select>
+         </div>
+
+      <div class="brand">
+         <span routerLink="/">{{ title() }}</span>
+         <ul>
+            <li routerLink="/products">Products</li>
+         </ul>
+      </div>
+
+      <div class="right">
+         <input type="search" placeholder="Search products..." (input)="onSearchInput($event)" />
+      </div>
+   </nav>
+</header>
