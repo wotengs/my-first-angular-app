@@ -1,0 +1,23 @@
+:root{
+	--grid-gap: 16px;
+}
+
+.products-grid{
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: var(--grid-gap);
+	padding: 16px;
+}
+
+.skeleton-card{
+	height: 300px;
+	border-radius: 12px;
+	background: linear-gradient(90deg,#f3f6fb,#eef2fb,#f3f6fb);
+	box-shadow: 0 6px 18px rgba(33,75,154,0.04);
+	animation: shimmer 1.2s linear infinite;
+}
+
+@keyframes shimmer{
+	0%{background-position: -400px 0}
+	100%{background-position: 400px 0}
+}

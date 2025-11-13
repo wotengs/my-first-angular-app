@@ -1,1 +1,25 @@
-<p>product-item works!</p>
+<article appHighlightCartedProduct [isCarted]="product()?.carted" class="product-card">
+  <div class="media">
+    <img class="thumb" src="{{ thumbnailUrl() }}" alt="{{ product()?.title || 'product' }}" />
+  </div>
+ 
+  <div class="content">
+    <h3 class="title">{{ product()?.title }}</h3>
+    <p class="category">{{ product()?.category }}</p>
+    <p class="description">{{ product()?.description }}</p>
+
+    <div class="meta">
+      <span class="price">{{ priceLabel() }}</span>
+      <span class="rating">★ {{ product()?.rating ?? '-' }}</span>
+      <span class="stock" [class.low]="(product()?.stock ?? 0) < 5">{{ product()?.stock ?? 0 }} in stock</span>
+    </div>
+
+    <div class="footer">
+      <div class="brand">{{ product()?.brand }}</div>
+      <button id="product-{{  product()?.id }}"
+            [value]="product()?.carted"
+            (change)="this.productClicked()"
+      class="btn">Add to cart</button>
+    </div>
+  </div>
+</article>

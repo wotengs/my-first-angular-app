@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Product } from '../model/product.type';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 interface ApiResponse<T> {
@@ -18,6 +18,11 @@ export class ProductService {
   http = inject(HttpClient);
   // public signal that components can read
   productItems = signal<Product[]>([]);
+  loading = signal(false);
+  // pagination state
+  skip = signal(0);
+  limit = signal(30);
+  total = signal<number | null>(null);
   // productItems: Array<Product>=[
   //   {
   //     title: 'Groceries',
@@ -33,7 +38,7 @@ export class ProductService {
   //   }
   // ];
   /**
-   * Load products using dummyjson API.
+   * Load products using dummyjson APIbbbbbb.
    * If `q` is provided, uses the search endpoint.
    * If `category` is provided, uses the category endpoint.
    * Otherwise uses /products with optional limit/skip/select/sortBy/order.
@@ -46,25 +51,22 @@ export class ProductService {
     order?: 'asc' | 'desc';
     q?: string;
     category?: string;
-  }): Observable<Product[]> {
+  }): Observable<ApiResponse<Product>> {
+    // return the full ApiResponse so callers can get total/skip/limit
     if (params?.q) {
       const url = `https://dummyjson.com/products/search`;
-      const httpParams = new HttpParams().set('q', params.q);
-      return this.http
-        .get<ApiResponse<Product>>(url, { params: httpParams })
-        .pipe(map((r) => r.products));
+      let httpParams = new HttpParams().set('q', params.q);
+      if (params.limit != null) httpParams = httpParams.set('limit', String(params.limit));
+      if (params.skip != null) httpParams = httpParams.set('skip', String(params.skip));
+      return this.http.get<ApiResponse<Product>>(url, { params: httpParams });
     }
 
     if (params?.category) {
-      const url = `https://dummyjson.com/products/category/${encodeURIComponent(
-        params.category
-      )}`;
-      const httpParams = new HttpParams()
-        .set('limit', String(params.limit ?? 30))
-        .set('skip', String(params.skip ?? 0));
-      return this.http
-        .get<ApiResponse<Product>>(url, { params: httpParams })
-        .pipe(map((r) => r.products));
+      const url = `https://dummyjson.com/products/category/${encodeURIComponent(params.category)}`;
+      let httpParams = new HttpParams();
+      if (params.limit != null) httpParams = httpParams.set('limit', String(params.limit));
+      if (params.skip != null) httpParams = httpParams.set('skip', String(params.skip));
+      return this.http.get<ApiResponse<Product>>(url, { params: httpParams });
     }
 
     // default products endpoint
@@ -76,19 +78,41 @@ export class ProductService {
     if (params?.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
     if (params?.order) httpParams = httpParams.set('order', params.order);
 
-    return this.http
-      .get<ApiResponse<Product>>(url, { params: httpParams })
-      .pipe(map((r) => r.products));
+    return this.http.get<ApiResponse<Product>>(url, { params: httpParams });
   }
 
-  loadProducts(opts?: { limit?: number; skip?: number; q?: string; category?: string }) {
-    this.getProductsFromApi({ limit: opts?.limit, skip: opts?.skip, q: opts?.q, category: opts?.category })
+  /**
+   * Load products and optionally append to existing list (append=true).
+   */
+  loadProducts(opts?: { limit?: number; skip?: number; q?: string; category?: string }, append = false) {
+    this.loading.set(true);
+    const limit = opts?.limit ?? this.limit();
+    const skip = opts?.skip ?? (append ? this.skip() : 0);
+
+    this.getProductsFromApi({ limit, skip, q: opts?.q, category: opts?.category })
       .pipe(
-        tap((products) => {
-          this.productItems.set(products || []);
-        })
+        tap((resp) => {
+          const products = resp.products || [];
+          if (append) {
+            this.productItems.update((curr) => curr.concat(products));
+          } else {
+            this.productItems.set(products);
+          }
+          this.total.set(resp.total);
+          this.skip.set(resp.skip);
+          this.limit.set(resp.limit);
+        }),
+        finalize(() => this.loading.set(false))
       )
-      .subscribe();
+      .subscribe({ error: () => this.loading.set(false) });
+  }
+
+  loadMore() {
+    // append next page
+    const nextSkip = this.skip() + this.limit();
+    // if total known and we've loaded all, skip
+    if (this.total() != null && this.productItems().length >= this.total()!) return;
+    this.loadProducts({ limit: this.limit(), skip: nextSkip }, true);
   }
 
   getCategories(): Observable<string[]> {

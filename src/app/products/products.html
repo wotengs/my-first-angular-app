@@ -1,4 +1,31 @@
-<!-- product list: read from ProductService.productItems signal -->
-@for (product of productService.productItems(); track product.id) {
-    <p>{{ product.title }}</p>
+<!-- product list: show loading skeletons only when loading AND no products yet; use native control flow @if/@for -->
+@if (productService.productItems().length == 0 && productService.loading()) {
+    <div class="products-grid">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+    </div>
+}
+
+@else if (productService.productItems().length > 0 && !productService.loading()) {
+    <div class="products-grid">
+        @for (product of productService.productItems(); track product.id) {
+            <app-product-item  (productToggled)="updateCartedItem($event)"  [product]="product"></app-product-item>
+        }
+    </div>
+
+    <div class="products-actions">
+        <div class="count">{{ productService.productItems().length }} of {{ productService.total() == null ? '...' : productService.total() }} items</div>
+
+        @if (productService.total() == null || productService.productItems().length < (productService.total() ?? 0)) {
+            <button class="btn" (click)="productService.loadMore()">Load more</button>
+        }
+
+        @if (!(productService.total() == null || productService.productItems().length < (productService.total() ?? 0))) {
+            <button class="btn" disabled>No more items</button>
+        }
+    </div>
 }
