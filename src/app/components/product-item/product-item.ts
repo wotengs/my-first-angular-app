@@ -10,15 +10,17 @@ import { HighlightCartedProduct } from '../../directives/highlight-carted-produc
   templateUrl: './product-item.html',
   styleUrls: ['./product-item.scss'],
 })
-
 export class ProductItem {
   /** receives a product object from parent */
-  product = input.required<Product>();
-  //product = input<Product | null>(null);
+  // product = input.required<Product>();
+  product = input<Product | null>(null);
   productToggled = output<Product>();
 
-  productClicked(){
-    this.productToggled.emit(this.product());
+  productClicked() {
+    const p = this.product();
+    if (!p) return;
+    const updated: Product = { ...p, carted: !p.carted };
+    this.productToggled.emit(updated);
   }
 
   // derived values for template
@@ -36,5 +38,4 @@ export class ProductItem {
     // use a random placeholder at a reasonable card size
     return 'https://lipsum.app/random/640x360';
   });
-
 }

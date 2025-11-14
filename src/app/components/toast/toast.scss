@@ -1,0 +1,29 @@
+.toast-wrapper {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9999;
+}
+.toast {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  min-width: 160px;
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.3);
+  transform-origin: right bottom;
+  animation: toast-in 0.22s ease;
+}
+@keyframes toast-in {
+  from {
+    transform: translateY(8px) scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}

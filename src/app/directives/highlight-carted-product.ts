@@ -1,19 +1,25 @@
 import { Directive, effect, ElementRef, inject, input } from '@angular/core';
 
 @Directive({
-  selector: '[appHighlightCartedProduct]'
+  selector: '[appHighlightCartedProduct]',
 })
 export class HighlightCartedProduct {
-    isCarted = input(false);
+  // Input signal (boolean) to indicate carted state
+  isCarted = input<boolean>(false);
 
-    el = inject(ElementRef);
+  private el = inject(ElementRef<HTMLElement>);
 
-    constructor() { }
+  constructor() {}
 
-    stylesEffect = effect(() =>{
-      if(this.isCarted){
-
-      }
-
-    })
+  // Toggle a CSS class on the host element when carted state changes
+  stylesEffect = effect(() => {
+    const c = this.isCarted();
+    const host = this.el.nativeElement;
+    if (!host) return;
+    if (c) {
+      host.classList.add('carted');
+    } else {
+      host.classList.remove('carted');
+    }
+  });
 }

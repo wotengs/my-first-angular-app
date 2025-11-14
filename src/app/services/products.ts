@@ -3,6 +3,7 @@ import { Product } from '../model/product.type';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, tap, finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { ToastService } from './toast';
 
 interface ApiResponse<T> {
   products: T[];
@@ -16,6 +17,7 @@ interface ApiResponse<T> {
 })
 export class ProductService {
   http = inject(HttpClient);
+  toast = inject(ToastService) as ToastService;
   // public signal that components can read
   productItems = signal<Product[]>([]);
   loading = signal(false);
@@ -23,6 +25,39 @@ export class ProductService {
   skip = signal(0);
   limit = signal(30);
   total = signal<number | null>(null);
+  // persisted cart map key
+  private storageKey = 'myapp_cart_map_v1';
+
+  constructor() {
+    // hydrate any persisted cart flags
+    this.loadCartFromStorage?.();
+  }
+
+  private getCartMapFromStorage(): Record<number, boolean> {
+    try {
+      const raw = localStorage.getItem(this.storageKey);
+      if (!raw) return {};
+      return JSON.parse(raw) as Record<number, boolean>;
+    } catch {
+      return {};
+    }
+  }
+
+  private saveCartMapToStorage(map: Record<number, boolean>) {
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(map));
+    } catch {
+      // ignore
+    }
+  }
+
+  private loadCartFromStorage() {
+    const map = this.getCartMapFromStorage();
+    // If there are existing items in productItems, apply the map
+    if (this.productItems().length) {
+      this.productItems.update((items) => items.map((p) => ({ ...p, carted: !!map[p.id] })));
+    }
+  }
   // productItems: Array<Product>=[
   //   {
   //     title: 'Groceries',
@@ -84,7 +119,10 @@ export class ProductService {
   /**
    * Load products and optionally append to existing list (append=true).
    */
-  loadProducts(opts?: { limit?: number; skip?: number; q?: string; category?: string }, append = false) {
+  loadProducts(
+    opts?: { limit?: number; skip?: number; q?: string; category?: string },
+    append = false
+  ) {
     this.loading.set(true);
     const limit = opts?.limit ?? this.limit();
     const skip = opts?.skip ?? (append ? this.skip() : 0);
@@ -92,11 +130,18 @@ export class ProductService {
     this.getProductsFromApi({ limit, skip, q: opts?.q, category: opts?.category })
       .pipe(
         tap((resp) => {
-          const products = resp.products || [];
+          const stored = this.getCartMapFromStorage();
+          const products = (resp.products || []).map((p) => ({ ...p, carted: !!stored[p.id] }));
           if (append) {
             this.productItems.update((curr) => curr.concat(products));
           } else {
             this.productItems.set(products);
+          }
+          // ensure we merge persisted carted flags if storage changes
+          if (Object.keys(stored).length) {
+            this.productItems.update((items) =>
+              items.map((p) => ({ ...p, carted: !!stored[p.id] }))
+            );
           }
           this.total.set(resp.total);
           this.skip.set(resp.skip);
@@ -115,8 +160,30 @@ export class ProductService {
     this.loadProducts({ limit: this.limit(), skip: nextSkip }, true);
   }
 
+  /**
+   * Set cart state for a product id, update signals, persist and optionally show toast
+   */
+  setCartState(id: number, carted: boolean) {
+    // update signal
+    this.productItems.update((items) => items.map((p) => (p.id === id ? { ...p, carted } : p)));
+
+    // persist map
+    const map = this.getCartMapFromStorage();
+    if (carted) map[id] = true;
+    else delete map[id];
+    this.saveCartMapToStorage(map);
+
+    // show toast feedback
+    if (carted) {
+      this.toast?.show('Added to cart');
+    } else {
+      this.toast?.show('Removed from cart');
+    }
+  }
+
   getCategories(): Observable<string[]> {
-    const url = `https://dummyjson.com/products/categories`;
+    // use category-list endpoint which returns an array of slugs (strings)
+    const url = `https://dummyjson.com/products/category-list`;
     return this.http.get<string[]>(url);
   }
 }

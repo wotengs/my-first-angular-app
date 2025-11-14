@@ -13,7 +13,7 @@ import { map } from 'rxjs/operators';
   templateUrl: './products.html',
   styleUrls: ['./products.scss'],
 })
-export class Products implements OnInit{
+export class Products implements OnInit {
   productService = inject(ProductService);
 
   ngOnInit(): void {
@@ -21,18 +21,8 @@ export class Products implements OnInit{
     this.productService.loadProducts();
   }
 
-  updateCartedItem(productItem: Product){
-    this.productService.productItems.update(products)=>{
-
-      return products.map(product=>{
-        if(productItem.id === productItem.id){
-          return {
-            ...product, 
-            carted:!product.carted,
-          }
-        }
-        return product;
-      })
-    }
+  updateCartedItem(productItem: Product) {
+    // delegate cart state update to ProductService so it can persist + toast
+    this.productService.setCartState(productItem.id, !!productItem.carted);
   }
 }
