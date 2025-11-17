@@ -21,6 +21,9 @@ export class ProductService {
   // public signal that components can read
   productItems = signal<Product[]>([]);
   loading = signal(false);
+  // form/dialog state for create/edit
+  formVisible = signal(false);
+  formProduct = signal<Product | null>(null);
   // pagination state
   skip = signal(0);
   limit = signal(30);
@@ -31,6 +34,23 @@ export class ProductService {
   constructor() {
     // hydrate any persisted cart flags
     this.loadCartFromStorage?.();
+  }
+
+  // Open the product form for creating a new product
+  openCreateForm() {
+    this.formProduct.set(null);
+    this.formVisible.set(true);
+  }
+
+  // Open the product form for editing an existing product
+  openEditForm(p: Product) {
+    this.formProduct.set({ ...p });
+    this.formVisible.set(true);
+  }
+
+  closeForm() {
+    this.formVisible.set(false);
+    this.formProduct.set(null);
   }
 
   private getCartMapFromStorage(): Record<number, boolean> {
@@ -73,7 +93,7 @@ export class ProductService {
   //   }
   // ];
   /**
-   * Load products using dummyjson APIbbbbbb.
+   * Load products using dummyjson API.
    * If `q` is provided, uses the search endpoint.
    * If `category` is provided, uses the category endpoint.
    * Otherwise uses /products with optional limit/skip/select/sortBy/order.
@@ -130,8 +150,8 @@ export class ProductService {
     this.getProductsFromApi({ limit, skip, q: opts?.q, category: opts?.category })
       .pipe(
         tap((resp) => {
-          const stored = this.getCartMapFromStorage();
-          const products = (resp.products || []).map((p) => ({ ...p, carted: !!stored[p.id] }));
+          const stored = this.getCartMapFromStorage(); // get persisted cart map
+          const products = (resp.products || []).map((p) => ({ ...p, carted: !!stored[p.id] })); // apply carted flags
           if (append) {
             this.productItems.update((curr) => curr.concat(products));
           } else {
@@ -185,5 +205,54 @@ export class ProductService {
     // use category-list endpoint which returns an array of slugs (strings)
     const url = `https://dummyjson.com/products/category-list`;
     return this.http.get<string[]>(url);
+  }
+
+  /**
+   * Create a product in-memory (simulate POST). Returns created product.
+   */
+  createProduct(partial: Partial<Product>): Product {
+    // create new id based on highest existing id
+    const items = this.productItems();
+    const maxId = items.reduce((m, it) => Math.max(m, it.id ?? 0), 0);
+    const newId = maxId + 1;
+    const created: Product = {
+      id: newId,
+      title: partial.title ?? 'Untitled',
+      description: partial.description ?? '',
+      price: partial.price ?? 0,
+      category: partial.category ?? '',
+      brand: partial.brand ?? '',
+      stock: partial.stock ?? 0,
+      thumbnail: partial.thumbnail ?? '',
+      images: (partial as any).images ?? [],
+      carted: !!partial['carted'],
+      rating: (partial as any).rating ?? undefined,
+      discountPercentage: (partial as any).discountPercentage ?? undefined,
+    } as Product;
+
+    // add to front of list
+    this.productItems.update((curr) => [created, ...curr]);
+    this.toast?.show('Product created');
+    return created;
+  }
+
+  /**
+   * Update a product in-memory (simulate PUT/PATCH).
+   */
+  updateProduct(updated: Product) {
+    this.productItems.update((items) =>
+      items.map((p) => (p.id === updated.id ? { ...p, ...updated } : p))
+    );
+    this.toast?.show('Product updated');
+  }
+
+  /**
+   * Delete a product from in-memory list (simulate DELETE).
+   */
+  deleteProduct(id: number) {
+    const toDelete = this.productItems().find((p) => p.id === id);
+    if (!toDelete) return;
+    this.productItems.update((items) => items.filter((p) => p.id !== id));
+    this.toast?.show('Product deleted');
   }
 }

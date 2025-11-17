@@ -1,0 +1,30 @@
+.product-form {
+  box-sizing: border-box;
+  background: var(--bg, #fff);
+  padding: 1rem;
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  border-radius: 8px;
+}
+.product-form label {
+  display: block;
+  margin-bottom: 8px;
+}
+.product-form input,
+.product-form textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  margin-top: 4px;
+}
+.product-form .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+.product-form .error {
+  color: #b00020;
+  font-size: 12px;
+}

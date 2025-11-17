@@ -1,5 +1,14 @@
 <article appHighlightCartedProduct [isCarted]="!!product()?.carted" class="product-card">
   <div class="media">
+    <div class="top-left-actions">
+      <button class="menu-toggle" (click)="openMenu($event)">⋯</button>
+      @if (showMenu) {
+      <div class="menu">
+        <button class="menu-item" (click)="doEdit()">Update</button>
+        <button class="menu-item" (click)="doDelete()">Delete</button>
+      </div>
+      }
+    </div>
     <img class="thumb" src="{{ thumbnailUrl() }}" alt="{{ product()?.title || 'product' }}" />
   </div>
 

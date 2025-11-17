@@ -1,0 +1,51 @@
+<div class="product-form">
+  <h2>{{ product() ? 'Edit Product' : 'Create Product' }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <label>
+      Title
+      <input formControlName="title" />
+    </label>
+    @if (form.get('title')?.invalid && form.get('title')?.touched) {
+    <div class="error">Title is required (min 2 chars).</div>
+    }
+
+    <label>
+      Price
+      <input type="number" formControlName="price" />
+    </label>
+    @if (form.get('price')?.invalid && form.get('price')?.touched) {
+    <div class="error">Enter a valid price.</div>
+    }
+
+    <label>
+      Category
+      <input formControlName="category" />
+    </label>
+
+    <label>
+      Brand
+      <input formControlName="brand" />
+    </label>
+
+    <label>
+      Stock
+      <input type="number" formControlName="stock" />
+    </label>
+
+    <label>
+      Thumbnail URL
+      <input formControlName="thumbnail" />
+    </label>
+
+    <label>
+      Description
+      <textarea formControlName="description"></textarea>
+    </label>
+
+    <div class="actions">
+      <button type="button" (click)="close()">Cancel</button>
+      <button type="submit" [disabled]="form.invalid">Save</button>
+    </div>
+  </form>
+</div>

@@ -25,4 +25,26 @@ export class Products implements OnInit {
     // delegate cart state update to ProductService so it can persist + toast
     this.productService.setCartState(productItem.id, !!productItem.carted);
   }
+
+  onEditProduct(p: Product) {
+    // open global form pre-populated
+    this.productService.openEditForm(p);
+  }
+
+  onDeleteProduct(id: number) {
+    // remove from in-memory list
+    this.productService.deleteProduct(id);
+  }
+
+  openCreateForm() {
+    this.productService.openCreateForm();
+  }
+
+  scrollTop() {
+    try {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch {
+      window.scrollTo(0, 0);
+    }
+  }
 }

@@ -1,31 +1,53 @@
-<!-- product list: show loading skeletons only when loading AND no products yet; use native control flow @if/@for -->
+<!-- product list: show loading skeletons only when loading AND no products yet; uses native control flow @if/@for -->
 @if (productService.productItems().length == 0 && productService.loading()) {
-    <div class="products-grid">
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-    </div>
+<div class="products-grid">
+  <div class="skeleton-card"></div>
+  <div class="skeleton-card"></div>
+  <div class="skeleton-card"></div>
+  <div class="skeleton-card"></div>
+  <div class="skeleton-card"></div>
+  <div class="skeleton-card"></div>
+</div>
+} @else if (productService.productItems().length > 0 && !productService.loading()) {
+<div class="products-grid">
+  @for (product of productService.productItems(); track product.id) {
+  <app-product-item
+    (productToggled)="updateCartedItem($event)"
+    (productEdit)="onEditProduct($event)"
+    (productDelete)="onDeleteProduct($event)"
+    [product]="product"
+  >
+  </app-product-item>
+  }
+</div>
+
+<div class="products-actions">
+  <div class="count">
+    {{ productService.productItems().length }} of
+    {{ productService.total() == null ? '...' : productService.total() }} items
+  </div>
+
+  @if (productService.total() == null || productService.productItems().length <
+  (productService.total() ?? 0)) {
+  <button class="btn" (click)="productService.loadMore()">Load more</button>
+  } @if (!(productService.total() == null || productService.productItems().length <
+  (productService.total() ?? 0))) {
+  <button class="btn" disabled>No more items</button>
+  }
+</div>
 }
 
-@else if (productService.productItems().length > 0 && !productService.loading()) {
-    <div class="products-grid">
-        @for (product of productService.productItems(); track product.id) {
-            <app-product-item  (productToggled)="updateCartedItem($event)"  [product]="product"></app-product-item>
-        }
-    </div>
-
-    <div class="products-actions">
-        <div class="count">{{ productService.productItems().length }} of {{ productService.total() == null ? '...' : productService.total() }} items</div>
-
-        @if (productService.total() == null || productService.productItems().length < (productService.total() ?? 0)) {
-            <button class="btn" (click)="productService.loadMore()">Load more</button>
-        }
-
-        @if (!(productService.total() == null || productService.productItems().length < (productService.total() ?? 0))) {
-            <button class="btn" disabled>No more items</button>
-        }
-    </div>
-}
+<!-- Floating action buttons (create + and scroll-to-top) scoped to products page -->
+<div class="floating-controls" aria-hidden="false">
+  <button
+    class="fab"
+    title="Create product"
+    aria-label="Create product"
+    (click)="productService.openCreateForm()"
+  >
+    +
+  </button>
+  <button class="fab small" title="Scroll to top" aria-label="Scroll to top" (click)="scrollTop()">
+    ↑
+  </button>
+</div>
