@@ -9,7 +9,7 @@ import { Greeting } from '../components/greeting/greeting';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
- homeMessage = signal('Hello, world');
+ homeMessage = signal('Please Login to Continue');
 
  keyUpHandler(event: KeyboardEvent ){
   console.log(`User Pressed the ${event.key} key`)
