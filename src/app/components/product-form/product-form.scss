@@ -28,3 +28,29 @@
   color: #b00020;
   font-size: 12px;
 }
+
+/* Title & action colors */
+.product-form h2 {
+  color: #214b9a;
+  margin-top: 0;
+}
+.product-form .actions button[type='submit'] {
+  background: #214b9a;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.product-form .actions button[type='button'] {
+  background: #f44336;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.product-form .actions button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

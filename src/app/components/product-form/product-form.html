@@ -20,7 +20,12 @@
 
     <label>
       Category
-      <input formControlName="category" />
+      <select formControlName="category">
+        <option value="">-- Select category --</option>
+        @for (cat of categories(); track cat) {
+        <option value="{{ cat }}">{{ humanizeCategory(cat) }}</option>
+        }
+      </select>
     </label>
 
     <label>

@@ -1,6 +1,5 @@
 import { Component, signal, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-
 import { HeaderComponent } from './components/header/header.component';
 import { ToastComponent } from './components/toast/toast';
 import { ProductFormContainer } from './components/product-form/product-form-container';

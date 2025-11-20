@@ -1,7 +1,8 @@
-import { Component, EventEmitter, input, output } from '@angular/core';
+import { Component, EventEmitter, input, output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Product } from '../../model/product.type';
+import { ProductService } from '../../services/products';
 
 @Component({
   selector: 'app-product-form',
@@ -26,6 +27,14 @@ export class ProductForm {
     thumbnail: [''],
   });
 
+  private ps = inject(ProductService);
+  categories = signal<string[]>([]);
+
+  constructor() {
+    // fetch categories for the select
+    this.ps.getCategories().subscribe({ next: (list) => this.categories.set(list || []) });
+  }
+
   ngOnChanges() {
     const p = this.product();
     if (p) {
@@ -41,6 +50,13 @@ export class ProductForm {
     } else {
       this.form.reset({ price: 0, stock: 0 });
     }
+  }
+
+  humanizeCategory(slug: string) {
+    if (!slug) return '';
+    return String(slug)
+      .replace(/[-_]/g, ' ')
+      .replace(/\b\w/g, (c) => c.toUpperCase());
   }
 
   submit() {

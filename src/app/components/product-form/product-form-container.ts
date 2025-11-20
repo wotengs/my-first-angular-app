@@ -28,6 +28,7 @@ import { Product } from '../../model/product.type';
         position: fixed;
         inset: 0;
         pointer-events: none;
+        z-index: 100000;
       }
       .overlay {
         position: fixed;
@@ -36,15 +37,17 @@ import { Product } from '../../model/product.type';
         align-items: center;
         justify-content: center;
         pointer-events: auto;
+        z-index: 100000;
       }
       .backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(0, 0, 0, 0.4);
+        background: rgba(0, 0, 0, 0.48);
+        z-index: 100000;
       }
       .panel {
         position: relative;
-        z-index: 10;
+        z-index: 100001;
       }
     `,
   ],
