@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ProductForm } from './product-form';
 import { ProductService } from '../../services/products';
 import { Product } from '../../model/product.type';
@@ -7,7 +7,7 @@ import { Product } from '../../model/product.type';
 @Component({
   selector: 'app-product-form-container',
   standalone: true,
-  imports: [CommonModule, ProductForm],
+  imports: [ProductForm],
   template: `
     @if (ps.formVisible()) {
     <div class="overlay">

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ProductService } from '../services/products';
 import { Product } from '../model/product.type';
 import { catchError } from 'rxjs';
@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, ProductItem],
+  imports: [ProductItem],
   templateUrl: './products.html',
   styleUrls: ['./products.scss'],
 })

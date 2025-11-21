@@ -1,6 +1,6 @@
 import { Component, signal, inject, OnInit, OnDestroy, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { ProductService } from '../../services/products';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
@@ -8,7 +8,7 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })

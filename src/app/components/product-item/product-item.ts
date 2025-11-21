@@ -1,12 +1,12 @@
 import { Component, input, computed, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Product } from '../../model/product.type';
 import { HighlightCartedProduct } from '../../directives/highlight-carted-product';
 
 @Component({
   selector: 'app-product-item',
   standalone: true,
-  imports: [CommonModule, HighlightCartedProduct],
+  imports: [HighlightCartedProduct],
   templateUrl: './product-item.html',
   styleUrls: ['./product-item.scss'],
 })

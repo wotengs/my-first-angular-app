@@ -1,5 +1,5 @@
 import { Component, EventEmitter, input, output, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Product } from '../../model/product.type';
 import { ProductService } from '../../services/products';
@@ -7,7 +7,7 @@ import { ProductService } from '../../services/products';
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './product-form.html',
   styleUrls: ['./product-form.scss'],
 })
