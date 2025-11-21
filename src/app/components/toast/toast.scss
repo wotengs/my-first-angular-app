@@ -17,6 +17,16 @@
   transform-origin: right bottom;
   animation: toast-in 0.22s ease;
 }
+
+.toast.success {
+  background: #0a6b4a;
+}
+.toast.error {
+  background: #c0392b;
+}
+.toast.info {
+  background: rgba(0, 0, 0, 0.8);
+}
 @keyframes toast-in {
   from {
     transform: translateY(8px) scale(0.98);

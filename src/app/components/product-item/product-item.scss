@@ -51,6 +51,14 @@
         background: transparent;
         cursor: pointer;
       }
+      .menu-item.update {
+        color: #214b9a;
+        font-weight: 600;
+      }
+      .menu-item.delete {
+        color: #c0392b;
+        font-weight: 600;
+      }
     }
     .thumb {
       width: 100%;

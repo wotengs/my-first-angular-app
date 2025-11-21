@@ -193,11 +193,11 @@ export class ProductService {
     else delete map[id];
     this.saveCartMapToStorage(map);
 
-    // show toast feedback
+    // show toast feedback: success when added, info when removed
     if (carted) {
-      this.toast?.show('Added to cart');
+      this.toast?.show('Added to cart', 3000, 'success');
     } else {
-      this.toast?.show('Removed from cart');
+      this.toast?.show('Removed from cart', 3000, 'info');
     }
   }
 
@@ -232,7 +232,7 @@ export class ProductService {
 
     // add to front of list
     this.productItems.update((curr) => [created, ...curr]);
-    this.toast?.show('Product created');
+    this.toast?.show('Product created', 3000, 'success');
     return created;
   }
 
@@ -243,7 +243,7 @@ export class ProductService {
     this.productItems.update((items) =>
       items.map((p) => (p.id === updated.id ? { ...p, ...updated } : p))
     );
-    this.toast?.show('Product updated');
+    this.toast?.show('Product updated', 3000, 'success');
   }
 
   /**
@@ -253,6 +253,6 @@ export class ProductService {
     const toDelete = this.productItems().find((p) => p.id === id);
     if (!toDelete) return;
     this.productItems.update((items) => items.filter((p) => p.id !== id));
-    this.toast?.show('Product deleted');
+    this.toast?.show('Product deleted', 3000, 'error');
   }
 }

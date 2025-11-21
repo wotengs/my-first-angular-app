@@ -4,8 +4,8 @@
       <button class="menu-toggle" (click)="openMenu($event)">⋯</button>
       @if (showMenu) {
       <div class="menu">
-        <button class="menu-item" (click)="doEdit()">Update</button>
-        <button class="menu-item" (click)="doDelete()">Delete</button>
+        <button class="menu-item update" (click)="doEdit()">Update</button>
+        <button class="menu-item delete" (click)="doDelete()">Delete</button>
       </div>
       }
     </div>
