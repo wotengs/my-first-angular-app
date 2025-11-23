@@ -1,21 +1,29 @@
+:host {
+  display: block;
+  padding: 12px; /* larger cell padding so grid gap + cell padding create obvious boxes */
+  box-sizing: border-box;
+}
+
 .product-card {
+  position: relative; /* position relative for menu placement */
+  overflow: visible; /* allow menu to overflow outside the card */
   display: flex;
   flex-direction: column;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(33, 75, 154, 0.08);
-  overflow: hidden;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
-  min-width: 220px;
+  width: 100%;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(33, 75, 154, 0.12);
+    /* avoid transform on hover — transforms create stacking contexts that can overlay the dropdown
+       Use a subtle stronger shadow instead so cards don't change stacking order when hovered */
+    box-shadow: 0 14px 34px rgba(33, 75, 154, 0.14);
   }
 
   .media {
     width: 100%;
-    height: 160px;
+    height: 72px;
     overflow: hidden;
     background: #f3f6fb;
     position: relative;
@@ -26,7 +34,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      z-index: 1; /* keep menu under overlays/modals */
+      z-index: 2;
       .menu-toggle {
         background: rgba(0, 0, 0, 0.5);
         color: #fff;
@@ -37,13 +45,16 @@
         cursor: pointer;
       }
       .menu {
+        position: absolute;
+        top: 44px;
+        left: 6px;
         background: rgba(255, 255, 255, 0.98);
         border-radius: 6px;
-        margin-left: 6px;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        z-index: 9999;
       }
       .menu-item {
         padding: 8px 12px;
@@ -52,11 +63,13 @@
         cursor: pointer;
       }
       .menu-item.update {
-        color: #214b9a;
+        background-color: #214b9a;
+        color: #fff;
         font-weight: 600;
       }
       .menu-item.delete {
-        color: #c0392b;
+        background-color: #f44336;
+        color: #fff;
         font-weight: 600;
       }
     }
@@ -68,17 +81,50 @@
     }
   }
 
-  .content {
+  /* position the toggle container above the card so dropdown isn't clipped */
+  > .position-absolute.top-0.end-0.p-2 {
+    top: -8px;
+    right: -8px;
+    z-index: 10002;
+  }
+
+  /* Ensure bootstrap .dropdown-menu inside the card renders above everything */
+  .dropdown-menu {
+    position: absolute !important;
+    top: 36px !important;
+    right: 0 !important;
+    z-index: 20000 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+  }
+
+  .card-body {
     padding: 12px 14px;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    flex: 1;
 
-    .title {
-      margin: 0;
-      font-size: 1rem;
+    .card-title {
+      margin: 0 0 4px 0;
+      font-size: 0.92rem;
       font-weight: 600;
       color: #102a43;
+      line-height: 1.2;
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .description-truncated {
+      font-size: 0.76rem;
+      color: #666;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      line-clamp: 1;
+      overflow: hidden;
+      margin: 0 0 6px 0;
     }
 
     .category {
@@ -98,11 +144,15 @@
 
     .meta {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
+      font-size: 0.85rem;
+      color: #333;
+      flex-wrap: wrap;
       .price {
         font-weight: 700;
         color: #0a6b4a;
+        font-size: 0.98rem;
       }
       .rating {
         color: #f2b01e;
@@ -129,15 +179,24 @@
         padding: 6px 10px;
         border-radius: 8px;
         cursor: pointer;
+        position: relative;
+        z-index: 3;
+        min-width: 64px;
+        white-space: nowrap;
+        font-size: 0.88rem;
       }
     }
   }
 }
 
 .product-card.carted {
-  outline: 2px solid rgba(10, 147, 125, 0.16);
-  box-shadow: 0 8px 24px rgba(10, 147, 125, 0.06);
+  outline: 10px solid rgba(77, 165, 232, 0.16);
+  box-shadow: 0 8px 24px rgba(3, 151, 243, 0.06);
   .btn {
-    background: #0a6b4a;
+    background: #49bced;
   }
+}
+.product-card.out-of-stock {
+  opacity: 0.6;
+  pointer-events: none;
 }

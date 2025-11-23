@@ -1,9 +1,9 @@
 import { Component, signal, inject, OnInit, OnDestroy, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router, NavigationEnd } from '@angular/router';
 
 import { ProductService } from '../../services/products';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, takeUntil, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -17,6 +17,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   title = signal('iCube Shopping Center');
 
+  // track whether current route is home so header can hide controls on landing page
+  isHome = signal<boolean>(false);
+
   // search and categories
 
   search = signal('');
@@ -24,6 +27,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   selectedCategory = signal<string | null>(null);
 
   private productService = inject(ProductService);
+  private router = inject(Router);
   private search$ = new Subject<string>();
   private destroy$ = new Subject<void>();
 
@@ -33,6 +37,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   //Property Functions
   ngOnInit(): void {
+    // set initial route state
+    this.isHome.set(this.router.url === '/' || this.router.url === '');
+    // update on navigation
+    this.router.events
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((ev) => {
+        const nav = ev as NavigationEnd;
+        this.isHome.set(nav.urlAfterRedirects === '/' || nav.urlAfterRedirects === '');
+      });
     // load categories
     this.productService.getCategories().subscribe((cats) => this.categories.set(cats || []));
     // debounced search subscription
@@ -65,13 +81,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.search$.next(q);
   }
 
-  onCategoryChange(event: Event) {
-    const sel = event.target as HTMLSelectElement;
-    const category = sel.value || null;
-    this.selectedCategory.set(category);
+  onCategoryChange(category: string | null) {
+    const cat = category || null;
+    this.selectedCategory.set(cat);
     // reset skip and load new category while preserving search term
     this.productService.loadProducts({
-      category: category ?? undefined,
+      category: cat ?? undefined,
       q: this.search() || undefined,
     });
   }

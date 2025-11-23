@@ -1,3 +1,15 @@
-<app-greeting [message]="homeMessage()"/>
-<input  type="text" (keyup)="keyUpHandler($event)">
- 
+<section class="hero">
+  <img class="hero-bg" src="assets/images/hero-image.jpg" alt="" aria-hidden="true" />
+  <div class="hero-overlay">
+    <div class="hero-content container text-center">
+      <img src="assets/images/logo-white.jpg" alt="iCube Retail" class="brand-logo" />
+      <h1>
+        Shop for Groceries, Mobiles, TVs, Home Appliances, Electronics &amp; more on iCube Retail
+      </h1>
+      <p class="sub">Everything you need, delivered fast.</p>
+      <a class="btn btn-primary btn-lg start-cta" routerLink="/products"
+        >Start Shopping <i class="bi bi-arrow-right" aria-hidden="true"></i
+      ></a>
+    </div>
+  </div>
+</section>

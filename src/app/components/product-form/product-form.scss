@@ -4,18 +4,20 @@
   padding: 1rem;
   width: 420px;
   max-width: calc(100vw - 32px);
-  border-radius: 8px;
+  border-radius: 32px;
 }
 .product-form label {
   display: block;
   margin-bottom: 8px;
 }
 .product-form input,
-.product-form textarea {
+.product-form textarea,
+.product-form select {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   padding: 6px 8px;
+  border-radius: 32px;
   margin-top: 4px;
 }
 .product-form .actions {
@@ -39,7 +41,7 @@
   color: #fff;
   border: none;
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 16px;
   cursor: pointer;
 }
 .product-form .actions button[type='button'] {
@@ -47,7 +49,7 @@
   color: #fff;
   border: none;
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 16px;
   cursor: pointer;
 }
 .product-form .actions button[disabled] {

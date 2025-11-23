@@ -1,26 +1,21 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 
 export type ToastVariant = 'success' | 'error' | 'info';
 
-export type ToastMessage = {
-  id: number;
-  text: string;
-  variant?: ToastVariant;
-};
-
 @Injectable({ providedIn: 'root' })
 export class ToastService {
-  private counter = 0;
-  toasts = signal<ToastMessage[]>([]);
+  constructor(private toastr: ToastrService) {}
 
   show(text: string, ms = 3000, variant: ToastVariant = 'info') {
-    const id = ++this.counter;
-    const message: ToastMessage = { id, text, variant };
-    this.toasts.update((t) => [...t, message]);
-    setTimeout(() => this.dismiss(id), ms);
+    // delegate to ngx-toastr
+    const opts = { timeOut: ms, closeButton: true, progressBar: true };
+    if (variant === 'success') this.toastr.success(text, undefined, opts);
+    else if (variant === 'error') this.toastr.error(text, undefined, opts);
+    else this.toastr.info(text, undefined, opts);
   }
 
-  dismiss(id: number) {
-    this.toasts.update((t) => t.filter((m) => m.id !== id));
+  dismissAll() {
+    this.toastr.clear();
   }
 }
