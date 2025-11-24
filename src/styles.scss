@@ -1,18 +1,19 @@
 /* use Bootstrap and ngx-toastr from node_modules (no CDN) */
 @use 'bootstrap/dist/css/bootstrap.min.css';
-@use 'bootstrap/scss/mixins';
-@use 'bootstrap/scss/functions';
-@use 'bootstrap/scss/maps';
-@use 'bootstrap/scss/variables';
-@use 'bootstrap/scss/utilities';
+// @use 'bootstrap/scss/mixins';
+// @use 'bootstrap/scss/functions';
+// @use 'bootstrap/scss/variables';
+// @use 'bootstrap/scss/maps';
 
-@use 'bootstrap/scss/variables-dark';
+// @use 'bootstrap/scss/utilities';
+
+// @use 'bootstrap/scss/variables-dark';
 
 
 
 
 @use 'bootstrap-icons/font/bootstrap-icons.css';
-@use 'ngx-toastr/toastr-bs5-alert.scss';
+@use 'ngx-toastr/toastr.css';
 
 :root {
   --header-height: 64px;

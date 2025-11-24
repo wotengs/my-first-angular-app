@@ -63,13 +63,15 @@
         cursor: pointer;
       }
       .menu-item.update {
-        background-color: #214b9a;
+        background: #214b9a;
         color: #fff;
         font-weight: 600;
+        border-radius: 32px;
       }
       .menu-item.delete {
-        background-color: #f44336;
+        background: #f44336;
         color: #fff;
+        border-radius: 16px;
         font-weight: 600;
       }
     }

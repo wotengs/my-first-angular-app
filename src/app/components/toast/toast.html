@@ -1,0 +1,7 @@
+<div class="toast-wrapper" aria-live="polite" aria-atomic="true">
+  @for (t of toast.toasts(); track t.id) {
+  <div class="toast {{ t.variant || 'info' }}" role="status">
+    {{ t.text }}
+  </div>
+  }
+</div>

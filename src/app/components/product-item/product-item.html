@@ -5,11 +5,15 @@
 >
   <div class="position-absolute top-0 end-0 p-2">
     <div class="btn-group">
-      <button class="btn btn-sm btn-light menu-toggle" (click)="openMenu($event)">⋯</button>
+      <button class="btn btn-sm btn-light menu-toggle rounded-3" (click)="openMenu($event)">
+        ⋯
+      </button>
       @if (showMenu) {
       <div class="dropdown-menu show p-2">
-        <button class="dropdown-item" (click)="doEdit()">Update</button>
-        <button class="dropdown-item text-danger" (click)="doDelete()">Delete</button>
+        <button class="dropdown-item rounded-3" (click)="doEdit()">Update</button>
+        <button class="dropdown-item text-danger rounded-3 btn-warning" (click)="doDelete()">
+          Delete
+        </button>
       </div>
       }
     </div>
@@ -39,13 +43,18 @@
     <div class="d-flex justify-content-between align-items-center">
       <div class="brand">{{ product()?.brand }}</div>
       <button
-        class="btn btn-outline-primary btn-sm"
+        class="btn btn-outline-primary btn-sm rounded-4"
         id="product-{{ product()?.id }}"
         (click)="productClicked()"
         [attr.aria-pressed]="product()?.carted"
       >
-        <i class="bi bi-cart" aria-hidden="true"></i>
-        <span class="label">{{ product()?.carted ? 'Remove' : 'Add' }}</span>
+        @if (product()?.carted) {
+        <i class="bi bi-cart-x" aria-hidden="true"></i>
+        <span class="label">Remove</span>
+        } @else {
+        <i class="bi bi-cart-plus" aria-hidden="true"></i>
+        <span class="label">Add</span>
+        }
       </button>
     </div>
   </div>

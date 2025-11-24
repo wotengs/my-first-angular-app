@@ -11,6 +11,10 @@
   margin: 0 auto;
 }
 
+.products-grid {
+  position: relative;
+}
+
 @media (min-width: 1200px) {
   .products-grid {
     grid-template-columns: repeat(4, 1fr);
@@ -18,11 +22,23 @@
 }
 
 .skeleton-card {
-  height: 260px;
+  height: 320px;
   border-radius: 12px;
   background: linear-gradient(90deg, #f3f6fb, #eef2fb, #f3f6fb);
   box-shadow: 0 6px 18px rgba(33, 75, 154, 0.04);
-  animation: shimmer 5s linear infinite;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.products-grid .grid-loading {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1500;
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 @keyframes shimmer {
@@ -31,5 +47,34 @@
   }
   100% {
     background-position: 400px 0;
+  }
+}
+
+/* Loading image pulse/fade */
+.products-grid .grid-loading {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1500;
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  pointer-events: none;
+  animation: pulseFade 1.6s ease-in-out infinite;
+}
+
+@keyframes pulseFade {
+  0% {
+    opacity: 0.6;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.06);
+  }
+  100% {
+    opacity: 0.6;
+    transform: translateX(-50%) scale(1);
   }
 }

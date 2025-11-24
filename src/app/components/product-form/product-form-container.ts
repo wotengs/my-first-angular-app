@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 import { ProductForm } from './product-form';
 import { ProductService } from '../../services/products';
 import { Product } from '../../model/product.type';

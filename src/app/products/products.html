@@ -1,6 +1,18 @@
 <!-- product list: show loading skeletons only when loading AND no products yet; uses native control flow @if/@for -->
 @if (productService.productItems().length == 0 && productService.loading()) {
 <div class="products-grid">
+  <img
+    class="grid-loading"
+    src="assets/images/loading-animation.png"
+    alt="loading"
+    aria-hidden="true"
+  />
+  <div class="skeleton-card"></div>
+  <div class="skeleton-card"></div>
+  <div class="skeleton-card"></div>
+  <div class="skeleton-card"></div>
+  <div class="skeleton-card"></div>
+  <div class="skeleton-card"></div>
   <div class="skeleton-card"></div>
   <div class="skeleton-card"></div>
   <div class="skeleton-card"></div>
@@ -29,10 +41,17 @@
 
   @if (productService.total() == null || productService.productItems().length <
   (productService.total() ?? 0)) {
-  <button class="btn" (click)="productService.loadMore()">Load more</button>
+  <button
+    class="btn btn-primary start-cta rounded-5 bi-arrow-90deg-down"
+    (click)="productService.loadMore()"
+  >
+    Load more
+  </button>
   } @if (!(productService.total() == null || productService.productItems().length <
   (productService.total() ?? 0))) {
-  <button class="btn" disabled>No more items</button>
+  <button class="btn btn-primary start-cta rounded-5 bi-arrow-90deg-up" disabled>
+    No more items
+  </button>
   }
 </div>
 }

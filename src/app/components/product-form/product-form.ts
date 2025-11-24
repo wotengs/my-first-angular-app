@@ -1,5 +1,4 @@
 import { Component, EventEmitter, input, output, inject, signal } from '@angular/core';
-
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Product } from '../../model/product.type';
 import { ProductService } from '../../services/products';
