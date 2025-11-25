@@ -9,9 +9,6 @@
 
 // @use 'bootstrap/scss/variables-dark';
 
-
-
-
 @use 'bootstrap-icons/font/bootstrap-icons.css';
 @use 'ngx-toastr/toastr.css';
 
@@ -112,9 +109,11 @@ app-header * {
   box-sizing: border-box;
 }
 app-header {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 1000;
+  left: 0;
+  right: 0;
+  z-index: 3000;
 }
 
 html,
@@ -124,4 +123,9 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+/* ensure page content does not sit under the fixed header */
+body {
+  padding-top: var(--header-height);
 }

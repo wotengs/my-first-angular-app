@@ -1,5 +1,10 @@
 <!-- product list: show loading skeletons only when loading AND no products yet; uses native control flow @if/@for -->
-@if (productService.productItems().length == 0 && productService.loading()) {
+@if (productService.error()) {
+<app-network-error
+  [message]="productService.error()"
+  (retry)="productService.retryLoad()"
+></app-network-error>
+} @else if (productService.productItems().length == 0 && productService.loading()) {
 <div class="products-grid">
   <img
     class="grid-loading"

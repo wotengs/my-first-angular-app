@@ -43,7 +43,7 @@
     <div class="d-flex justify-content-between align-items-center">
       <div class="brand">{{ product()?.brand }}</div>
       <button
-        class="btn btn-outline-primary btn-sm rounded-4"
+        class="btn btn-outline-primary btn-sm rounded-3"
         id="product-{{ product()?.id }}"
         (click)="productClicked()"
         [attr.aria-pressed]="product()?.carted"

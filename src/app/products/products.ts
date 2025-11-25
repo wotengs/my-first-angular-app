@@ -4,12 +4,13 @@ import { ProductService } from '../services/products';
 import { Product } from '../model/product.type';
 import { catchError } from 'rxjs';
 import { ProductItem } from '../components/product-item/product-item';
+import { NetworkErrorComponent } from '../core/network-error/network-error.component';
 import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [ProductItem],
+  imports: [ProductItem, NetworkErrorComponent],
   templateUrl: './products.html',
   styleUrls: ['./products.scss'],
 })

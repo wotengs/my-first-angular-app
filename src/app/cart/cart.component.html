@@ -1,0 +1,62 @@
+<p-stepper [(value)]="activeStep" class="cart-stepper">
+  <p-step-list>
+    <p-step [value]="1" class="step-item">
+      <ng-template #content let-activateCallback="activateCallback" let-value="value">
+        <button class="step-button" (click)="activateCallback()" aria-label="Cart step">
+          <span class="step-circle" [class.active]="value <= activeStep">1</span>
+          <div class="step-label">Cart</div>
+        </button>
+      </ng-template>
+    </p-step>
+
+    <p-step [value]="2" class="step-item">
+      <ng-template #content let-activateCallback="activateCallback" let-value="value">
+        <button class="step-button" (click)="activateCallback()" aria-label="Checkout step">
+          <span class="step-circle" [class.active]="value <= activeStep">2</span>
+          <div class="step-label">Checkout</div>
+        </button>
+      </ng-template>
+    </p-step>
+
+    <p-step [value]="3" class="step-item">
+      <ng-template #content let-activateCallback="activateCallback" let-value="value">
+        <button class="step-button" (click)="activateCallback()" aria-label="Payment step">
+          <span class="step-circle" [class.active]="value <= activeStep">3</span>
+          <div class="step-label">Payment</div>
+        </button>
+      </ng-template>
+    </p-step>
+  </p-step-list>
+
+  <p-step-panels>
+    <p-step-panel [value]="1">
+      <ng-template #content>
+        <app-card-step
+          [items]="cartItems$ | async"
+          [count]="(cartCount$ | async) || 0"
+          [total]="(cartTotal$ | async) || 0"
+          (increase)="increase($event)"
+          (decrease)="decrease($event)"
+          (remove)="remove($event)"
+          (clear)="clear()"
+          (cont)="activeStep = $event"
+        ></app-card-step>
+      </ng-template>
+    </p-step-panel>
+
+    <p-step-panel [value]="2">
+      <ng-template #content>
+        <app-checkout-step
+          (back)="activeStep = $event"
+          (next)="activeStep = $event"
+        ></app-checkout-step>
+      </ng-template>
+    </p-step-panel>
+
+    <p-step-panel [value]="3">
+      <ng-template #content>
+        <app-payment-step (back)="activeStep = $event"></app-payment-step>
+      </ng-template>
+    </p-step-panel>
+  </p-step-panels>
+</p-stepper>

@@ -1,8 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Product } from '../model/product.type';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, tap, finalize } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { map, tap, finalize, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 import { ToastService } from './toast';
 
 interface ApiResponse<T> {
@@ -28,6 +28,8 @@ export class ProductService {
   skip = signal(0);
   limit = signal(30);
   total = signal<number | null>(null);
+  // network / loading error message (null when OK)
+  error = signal<string | null>(null);
   // persisted cart map key
   private storageKey = 'myapp_cart_map_v1';
 
@@ -143,6 +145,8 @@ export class ProductService {
     opts?: { limit?: number; skip?: number; q?: string; category?: string },
     append = false
   ) {
+    // clear previous network errors before starting
+    this.error.set(null);
     this.loading.set(true);
     const limit = opts?.limit ?? this.limit();
     const skip = opts?.skip ?? (append ? this.skip() : 0);
@@ -167,9 +171,15 @@ export class ProductService {
           this.skip.set(resp.skip);
           this.limit.set(resp.limit);
         }),
+        catchError((err) => {
+          // surface network/server error message for UI
+          this.error.set('Unable to load products. Check your internet connection and retry.');
+          // return an empty observable so the stream completes
+          return of(null as any);
+        }),
         finalize(() => this.loading.set(false))
       )
-      .subscribe({ error: () => this.loading.set(false) });
+      .subscribe();
   }
 
   loadMore() {
@@ -178,6 +188,14 @@ export class ProductService {
     // if total known and we've loaded all, skip
     if (this.total() != null && this.productItems().length >= this.total()!) return;
     this.loadProducts({ limit: this.limit(), skip: nextSkip }, true);
+  }
+
+  /**
+   * Retry helper to clear error and reload first page.
+   */
+  retryLoad() {
+    this.error.set(null);
+    this.loadProducts({ limit: this.limit(), skip: 0 }, false);
   }
 
   /**
@@ -204,7 +222,12 @@ export class ProductService {
   getCategories(): Observable<string[]> {
     // use category-list endpoint which returns an array of slugs (strings)
     const url = `https://dummyjson.com/products/category-list`;
-    return this.http.get<string[]>(url);
+    return this.http.get<string[]>(url).pipe(
+      catchError((err) => {
+        this.error.set('Unable to load categories. Check your internet connection.');
+        return of([] as string[]);
+      })
+    );
   }
 
   /**

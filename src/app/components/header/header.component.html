@@ -27,9 +27,13 @@
           placeholder="Search products..."
           (input)="onSearchInput($event)"
         />
-        <button class="btn btn-outline-primary border-2 rounded-4" aria-label="Cart">
+        <button
+          class="btn btn-outline-primary border-2 rounded-4"
+          aria-label="Cart"
+          (click)="openCart($event)"
+        >
           <i class="bi bi-cart" aria-hidden="true"></i>
-          <span class="cart-count">{{ cartCount() }}</span>
+          <span class="cart-count">{{ cartCount$ | async }}</span>
         </button>
       </div>
       }

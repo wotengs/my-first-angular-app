@@ -1,0 +1,27 @@
+.network-error-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 2500; /* above product grid, below header (header will be higher) */
+}
+
+.network-error-card {
+  background: #fff;
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  max-width: 420px;
+  width: calc(100% - 32px);
+  text-align: center;
+}
+
+.network-error-card h4 {
+  margin-bottom: 0.5rem;
+}
+
+.network-error-card .actions {
+  margin-top: 0.75rem;
+}

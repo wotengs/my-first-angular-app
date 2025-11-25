@@ -1,7 +1,9 @@
-import { Component, input, computed, output, OnInit, OnDestroy } from '@angular/core';
+import { Component, input, computed, output, OnInit, OnDestroy, inject } from '@angular/core';
 
 import { Product } from '../../model/product.type';
 import { HighlightCartedProduct } from '../../directives/highlight-carted-product';
+import { Store } from '@ngrx/store';
+import * as CartActions from '../../state/cart/cart.actions';
 
 @Component({
   selector: 'app-product-item',
@@ -40,6 +42,18 @@ export class ProductItem implements OnInit, OnDestroy {
     if (!p) return;
     const updated: Product = { ...p, carted: !p.carted };
     this.productToggled.emit(updated);
+    // update NgRx cart as well
+    try {
+      const store = inject(Store);
+      if (!p.carted) {
+        // adding
+        store.dispatch(CartActions.addProduct({ product: { ...p, carted: true }, quantity: 1 }));
+      } else {
+        store.dispatch(CartActions.removeProduct({ productId: p.id }));
+      }
+    } catch {
+      // ignore if store not available
+    }
   }
 
   openMenu(ev?: Event) {

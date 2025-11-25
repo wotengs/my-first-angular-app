@@ -1,0 +1,10 @@
+<div class="network-error-overlay" role="alertdialog" aria-live="assertive">
+  <div class="network-error-card">
+    <h4>Connection error</h4>
+    <p>{{ message ?? 'Unable to reach the server. Please check your internet connection.' }}</p>
+    <div class="actions d-flex gap-2">
+      <button class="btn btn-primary" (click)="onRetry()">Retry</button>
+      <button class="btn btn-outline-secondary" (click)="onReload()">Reload page</button>
+    </div>
+  </div>
+</div>
