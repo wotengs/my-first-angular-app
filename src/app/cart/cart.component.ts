@@ -34,6 +34,7 @@ export class CartComponent implements OnInit {
   ngOnInit(): void {
     // when running standalone imported store is available via injection in providers
   }
+  // Angular will inject the Store when running standalone
 
   constructor(private store: Store) {
     this.cartItems$ = this.store.select(selectCartItems);
