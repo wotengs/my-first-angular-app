@@ -104,17 +104,4 @@ Developer notes and rationale
 - Bootstrap CSS is imported as compiled CSS to avoid SCSS mixin issues and ensure compatibility with the app build.
 - PrimeNG is used only for the Stepper, Card and Panel components — styling is scoped in the cart step component so cards/panels render with white backgrounds even if a global PrimeNG theme is dark.
 - NgRx store is used for cart state; actions include `addProduct`, `removeProduct`, `updateQuantity`, `clearCart`, and `setCartItems` (used when loading the sample cart from the remote API).
-- Templates were progressively converted to the native `@if` / `@for` syntax where requested to avoid future deprecation issues.
-
-Remaining tasks / suggestions
-- Run a full lint/build to catch any AOT/template warnings and fix them: `npm run build`.
-- Consider moving cart population (fetching `dummyjson` cart) into an NgRx Effect so side-effects are in the store layer.
-- Add persistence (localStorage) for the cart to keep user items across reloads.
-- Replace remaining `*ngIf`/`*ngFor` instances across the project with `@if`/`@for` if you want to fully remove deprecated usages (I can do this in a controlled sweep).
-- Visual polish: tune spacing, colors and border radii to precisely match the design — I can iterate on the cart CSS to reach pixel-perfect alignment.
-
-Contact / next steps
-- Tell me which of the remaining tasks you'd like me to do next: run build and fix remaining template errors, move cart fetch into NgRx Effects, persist cart to localStorage, or fine-tune visual styles (I can apply exact spacing/colors).
-
----
-Generated/updated by the development agent working in this workspace.
+- Network error handling is done via a simple signal in the `ProductsService` to keep things lightweight and straightforward.

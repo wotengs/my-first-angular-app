@@ -10,6 +10,8 @@ import { routes } from './app.routes';
 import { provideStore } from '@ngrx/store';
 import { cartReducer } from './state/cart/cart.reducer';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { provideEffects } from '@ngrx/effects';
+import { CartEffects } from './state/cart/cart.effects';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -27,6 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideAnimations(),
     provideStore({ cart: cartReducer }),
+    provideEffects([CartEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
     importProvidersFrom(ToastrModule.forRoot()),
     provideAnimationsAsync(),

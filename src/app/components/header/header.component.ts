@@ -1,5 +1,5 @@
 import { Component, signal, inject, OnInit, OnDestroy, computed } from '@angular/core';
-import { AsyncPipe} from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { RouterLink, Router, NavigationEnd } from '@angular/router';
 import { ProductService } from '../../services/products';
 import { CartService } from '../../services/cart.service';
@@ -67,30 +67,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   openCart(ev?: Event) {
     ev?.preventDefault();
-    // fetch example cart for user 142 and populate store
-    this.cartService.fetchCartForUser(142).subscribe({
-      next: (resp) => {
-        const cart = resp?.carts && resp.carts.length ? resp.carts[0] : null;
-        if (cart) {
-          const items = cart.products.map((p) => ({
-            productId: p.id,
-            product: {
-              id: p.id,
-              title: p.title,
-              price: p.price,
-              thumbnail: p.thumbnail,
-            },
-            quantity: p.quantity,
-          }));
-          this.store.dispatch(CartActions.setCartItems({ items }));
-        }
-        this.router.navigate(['/cart']);
-      },
-      error: () => {
-        // still navigate so user can see empty cart UI
-        this.router.navigate(['/cart']);
-      },
-    });
+    // Request cart loading via NgRx effect (side-effect moved to effects)
+    this.store.dispatch(CartActions.loadCart({ userId: 142 }));
+    // navigate to cart view; effect will populate store when loaded
+    this.router.navigate(['/cart']);
   }
   // catlegory objects [{slug,label}] for filtering
   categoriesMapped = computed(() => {
