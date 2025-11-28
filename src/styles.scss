@@ -10,6 +10,7 @@
 // @use 'bootstrap/scss/variables-dark';
 
 @use 'bootstrap-icons/font/bootstrap-icons.css';
+@use 'primeicons/primeicons.css';
 @use 'ngx-toastr/toastr.css';
 
 :root {
@@ -128,4 +129,23 @@ body {
 /* ensure page content does not sit under the fixed header */
 body {
   padding-top: var(--header-height);
+}
+
+/* Login specific styles (moved from inline styles) */
+.login-card {
+  max-width: 920px;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.login-logo {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+}
+
+/* small spinner used inside login button */
+.btn-spinner {
+  width: 18px !important;
+  height: 18px !important;
 }

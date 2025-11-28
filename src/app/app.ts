@@ -5,6 +5,7 @@ import { ProductFormContainer } from './components/product-form/product-form-con
 import { ProductService } from './services/products';
 import { PrimeNG } from 'primeng/config';
 //import { TranslateService } from '@ngx-translate/core';
+import { AuthService } from './core/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,9 @@ import { PrimeNG } from 'primeng/config';
   templateUrl: './app.html',
 })
 export class App implements OnInit {
-  constructor(private primeng: PrimeNG) {}
+  constructor(private primeng: PrimeNG, private auth: AuthService) {
+    this.auth.initFromStorage();
+  }
 
   //constructor(private primeng: PrimeNG, private translateService: TranslateService) {}
 

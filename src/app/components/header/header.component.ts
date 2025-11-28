@@ -1,5 +1,5 @@
 import { Component, signal, inject, OnInit, OnDestroy, computed } from '@angular/core';
-import { AsyncPipe} from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { RouterLink, Router, NavigationEnd } from '@angular/router';
 import { ProductService } from '../../services/products';
 import { CartService } from '../../services/cart.service';
@@ -21,8 +21,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   title = signal('iCube Shopping Center');
 
-  // track whether current route is home so header can hide controls on landing page
-  isHome = signal<boolean>(false);
+  // track whether current route is products so header can hide controls on landing page
+  // isHome = signal<boolean>(false);
+  isProducts = signal<boolean>(false);
 
   // search and categories
 
@@ -44,7 +45,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   //Property Functions
   ngOnInit(): void {
     // set initial route state
-    this.isHome.set(this.router.url === '/' || this.router.url === '');
+    // this.isHome.set(this.router.url === '/' || this.router.url === '');
+    this.isProducts.set(this.router.url === '/products');
     // update on navigation
     this.router.events
       .pipe(
@@ -53,7 +55,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       )
       .subscribe((ev) => {
         const nav = ev as NavigationEnd;
-        this.isHome.set(nav.urlAfterRedirects === '/' || nav.urlAfterRedirects === '');
+        // this.isHome.set(nav.urlAfterRedirects === '/' || nav.urlAfterRedirects === '');
+        this.isProducts.set(nav.urlAfterRedirects === '/products');
       });
     // load categories
     this.productService.getCategories().subscribe((cats) => this.categories.set(cats || []));
@@ -67,30 +70,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   openCart(ev?: Event) {
     ev?.preventDefault();
-    // fetch example cart for user 142 and populate store
-    this.cartService.fetchCartForUser(142).subscribe({
-      next: (resp) => {
-        const cart = resp?.carts && resp.carts.length ? resp.carts[0] : null;
-        if (cart) {
-          const items = cart.products.map((p) => ({
-            productId: p.id,
-            product: {
-              id: p.id,
-              title: p.title,
-              price: p.price,
-              thumbnail: p.thumbnail,
-            },
-            quantity: p.quantity,
-          }));
-          this.store.dispatch(CartActions.setCartItems({ items }));
-        }
-        this.router.navigate(['/cart']);
-      },
-      error: () => {
-        // still navigate so user can see empty cart UI
-        this.router.navigate(['/cart']);
-      },
-    });
+    // Request cart loading via NgRx effect (side-effect moved to effects)
+    this.store.dispatch(CartActions.loadCart({ userId: 142 }));
+    // navigate to cart view; effect will populate store when loaded
+    this.router.navigate(['/cart']);
   }
   // catlegory objects [{slug,label}] for filtering
   categoriesMapped = computed(() => {

@@ -13,3 +13,5 @@ export const updateQuantity = createAction(
 );
 export const clearCart = createAction('[Cart] Clear');
 export const setCartItems = createAction('[Cart] Set Items', props<{ items: CartItem[] }>());
+export const loadCart = createAction('[Cart] Load From Remote', props<{ userId: number }>());
+export const loadCartFailure = createAction('[Cart] Load Failure', props<{ error?: any }>());

@@ -89,7 +89,7 @@ import { CartItem } from '../../state/cart/cart.model';
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 ">
           <p-panel class="p-3 rounded-3 bg-light" header="Promo code">
             <div class="mb-3">
               <div class="input-group rounded-pill overflow-hidden">
@@ -122,6 +122,49 @@ import { CartItem } from '../../state/cart/cart.model';
       </div>
     </div>
   `,
+  styles: [
+    `
+      :host ::ng-deep .p-card,
+      :host ::ng-deep .p-panel {
+        background: #ffffff !important;
+        color: #212529 !important;
+      }
+      :host ::ng-deep .p-card {
+        border-radius: 12px !important;
+      }
+      :host ::ng-deep .p-panel {
+        border-radius: 12px !important;
+      }
+      :host .p-3.rounded-4 {
+        border-radius: 12px;
+      }
+      :host img {
+        border-radius: 8px;
+      }
+      :host .qty-btn {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      :host .product-title {
+        font-size: 0.95rem;
+      }
+      :host .product-brand {
+        color: #6c757d;
+        font-size: 0.8rem;
+      }
+      :host .cart-row {
+        padding: 8px;
+      }
+      :host .summary-panel {
+        background-color: #f8f9fa;
+        border-radius: 12px;
+      }
+    `,
+  ],
 })
 export class CardComponent {
   @Input() items: CartItem[] | null = [];
