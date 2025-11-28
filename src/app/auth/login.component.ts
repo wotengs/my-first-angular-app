@@ -11,14 +11,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    DividerModule,
-    ButtonModule,
-    InputTextModule,
-
-  ],
+  imports: [CommonModule, ReactiveFormsModule, DividerModule, ButtonModule, InputTextModule],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
@@ -32,7 +25,7 @@ export class LoginComponent {
     private toastr: ToastrService
   ) {
     this.loginForm = this.fb.group({
-       username: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9]*$')]],
+      username: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9]*$')]],
       password: ['', [Validators.required]],
     });
   }
@@ -52,9 +45,10 @@ export class LoginComponent {
     this.auth.login({ username, password }).subscribe({
       next: (res: any) => {
         this.loading = false;
-        // Some backends may return { message: 'Invalid credentials' } with 200
-        if (res && typeof res === 'object' && res.message === 'Invalid credentials') {
-          this.toastr.error('Invalid credentials', 'Login failed');
+        // Some backends may return an object with `message` on failure.
+        if (res && typeof res === 'object' && res.message) {
+          const msg = res.message || 'Invalid credentials';
+          this.toastr.error(msg, 'Login failed');
           this.username?.setErrors({ invalidCredentials: true });
           this.password?.setErrors({ invalidCredentials: true });
           this.username?.markAsTouched();
@@ -62,14 +56,26 @@ export class LoginComponent {
           return;
         }
 
-        // success
-        this.toastr.success('Signed in successfully', 'Welcome');
+        this.toastr.success(
+          'Signed in successfully',
+          'Welcome ' + res?.firstName + ' ' + res?.lastName || username
+        );
         this.router.navigate(['/products']);
       },
       error: (err) => {
         this.loading = false;
-        // show error toast and mark fields invalid
+        // If server returns a structured error (e.g. 400 with { message }), treat as invalid credentials
         const message = err?.error?.message || err?.message || 'Login failed';
+        if (err?.status === 400 && message) {
+          this.toastr.error(message, 'Login failed');
+          this.username?.setErrors({ invalidCredentials: true });
+          this.password?.setErrors({ invalidCredentials: true });
+          this.username?.markAsTouched();
+          this.password?.markAsTouched();
+          return;
+        }
+
+        // Other errors: show a toast and mark fields as invalid for visibility
         this.toastr.error(message, 'Login failed');
         this.username?.setErrors({ invalidCredentials: true });
         this.password?.setErrors({ invalidCredentials: true });
