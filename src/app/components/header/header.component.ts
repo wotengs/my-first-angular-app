@@ -21,8 +21,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   title = signal('iCube Shopping Center');
 
-  // track whether current route is home so header can hide controls on landing page
-  isHome = signal<boolean>(false);
+  // track whether current route is products so header can hide controls on landing page
+  // isHome = signal<boolean>(false);
+  isProducts = signal<boolean>(false);
 
   // search and categories
 
@@ -44,7 +45,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   //Property Functions
   ngOnInit(): void {
     // set initial route state
-    this.isHome.set(this.router.url === '/' || this.router.url === '');
+    // this.isHome.set(this.router.url === '/' || this.router.url === '');
+    this.isProducts.set(this.router.url === '/products');
     // update on navigation
     this.router.events
       .pipe(
@@ -53,7 +55,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       )
       .subscribe((ev) => {
         const nav = ev as NavigationEnd;
-        this.isHome.set(nav.urlAfterRedirects === '/' || nav.urlAfterRedirects === '');
+        // this.isHome.set(nav.urlAfterRedirects === '/' || nav.urlAfterRedirects === '');
+        this.isProducts.set(nav.urlAfterRedirects === '/products');
       });
     // load categories
     this.productService.getCategories().subscribe((cats) => this.categories.set(cats || []));

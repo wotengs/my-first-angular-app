@@ -14,6 +14,8 @@ import { provideEffects } from '@ngrx/effects';
 import { CartEffects } from './state/cart/cart.effects';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { JwtInterceptor } from './core/interceptors/auth.interceptor';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { providePrimeNG } from 'primeng/config';
@@ -30,6 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideStore({ cart: cartReducer }),
     provideEffects([CartEffects]),
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
     importProvidersFrom(ToastrModule.forRoot()),
     provideAnimationsAsync(),
