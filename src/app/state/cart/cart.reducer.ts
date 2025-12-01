@@ -6,6 +6,7 @@ export const initialState: CartState = {
   items: [],
 };
 
+// Define the cart reducer
 export const cartReducer = createReducer(
   initialState,
   on(CartActions.addProduct, (state, { product, quantity }) => {

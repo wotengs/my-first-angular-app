@@ -1,120 +1,47 @@
 # MyFirstAngularApp
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.9.
+This workspace is an Angular (v21) application that was migrated from Angular Material to Bootstrap/ng-bootstrap with progressive enhancements: NgRx cart state, PrimeNG stepper for checkout, a JWT-based authentication flow, and proactive token refresh.
 
-## Development server
-
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## MyFirstAngularApp — Project Notes
-
-**Summary:** This README documents the work done converting an Angular app from Angular Material to Bootstrap/ng-bootstrap + bootstrap-icons, adding improved loading/error UX, implementing a cart page with NgRx and a PrimeNG stepper, and breaking the cart steps into standalone components.
-
-**Key goals achieved**
-- Replaced Angular Material usage with Bootstrap CSS and `bootstrap-icons`.
-- Implemented a blurred hero on the Home page using `src/assets/images/hero-image.jpg` and a CTA to `/products`.
-- Redesigned the header (`src/app/components/header/*`) to a fixed top header with logo, search and cart button, hiding controls on home.
-- Reworked product grid and `product-item` markup: smaller thumbnails, truncated descriptions, price/rating/stock shown, menu floats above cards and only one menu opens at a time.
-- Added loading skeletons and animated loading image while products load; added a `NetworkError` overlay to prompt retry when offline.
-- Introduced NgRx store for cart state (actions, reducer, selectors) and registered it in `src/app/app.config.ts`.
-- Implemented `CartService` to fetch an example cart from `https://dummyjson.com/carts/user/142` and populated the store when the header cart button is clicked.
-- Built a `Cart` page with a PrimeNG stepper and separated steps under `src/app/cart/cardSteps/`:
-	- `card.component.ts` — Cart step (shows cart items, qty controls, remove, promo input, summary)
-	- `checkout.component.ts` — Checkout step (placeholder)
-	- `payment.component.ts` — Payment step (placeholder)
-- Converted critical templates to native Angular control-flow (`@if` / `@for`) where requested to avoid deprecation warnings.
-
-**Files / features of note**
-- `src/styles.scss`
-	- Imports compiled Bootstrap CSS and `bootstrap-icons` and sets global theme variables.
-- `src/app/services/products.ts`
-	- Adds an `error` signal and `retryLoad()` helper to provide friendly network error handling.
-- `src/app/core/network-error/` — standalone `NetworkError` component.
-- `src/app/state/cart/` — NgRx cart feature (models, actions, reducer, selectors).
-- `src/app/services/cart.service.ts` — fetches sample cart JSON and maps it to cart items.
-- `src/app/cart/cart.component.ts` — parent stepper component wiring to NgRx selectors and handling cart actions.
-- `src/app/cart/cardSteps/card.component.ts` — presentational cart step implemented with Bootstrap classes and PrimeNG `p-card` + `p-panel`. Uses Bootstrap Icons for controls and honors the light card/panel background even when PrimeNG global theme is set.
-
-Running the app
- - Install dependencies (if needed):
+**Quick Start**
+- Install dependencies:
 ```powershell
 npm install
 ```
- - Start dev server:
+- Run dev server:
 ```powershell
-npm run start
+npm start
 ```
- - Open `http://localhost:4200/` and navigate to `/cart` to review the cart step UI.
+- Open `http://localhost:4200/`
 
-What to check after running
-- Header: fixed top with logo and cart badge (count from NgRx `selectCartCount`).
-- Products page: skeletons while loading, animated loading image, product cards with floating menus.
-- Cart page (`/cart`): left column shows cart items as rounded Bootstrap/PrimeNG cards with image, title, brand (brand is shown below title in muted gray), centered qty controls with Bootstrap Icons, price right-aligned; right column shows promo input with a light gray background, subtotal/discount/total and a full-width dark CTA.
-- Network error: when offline, `NetworkError` overlay with retry/reload appears.
+The project now includes the following major features and files (high-level):
 
-Developer notes and rationale
-- Bootstrap CSS is imported as compiled CSS to avoid SCSS mixin issues and ensure compatibility with the app build.
-- PrimeNG is used only for the Stepper, Card and Panel components — styling is scoped in the cart step component so cards/panels render with white backgrounds even if a global PrimeNG theme is dark.
-- NgRx store is used for cart state; actions include `addProduct`, `removeProduct`, `updateQuantity`, `clearCart`, and `setCartItems` (used when loading the sample cart from the remote API).
-- Templates were progressively converted to the native `@if` / `@for` syntax where requested to avoid future deprecation issues.
+- **Auth (JWT)**: `src/app/core/auth.service.ts` implements login, refresh and proactive refresh scheduling (parses `exp` in the JWT and schedules a refresh 60s before expiry). `authState$` exposes authentication state.
+- **Interceptor**: `src/app/core/interceptors/auth.interceptor.ts` attaches the access token to requests and uses centralized `performRefresh()` to refresh tokens on 401, retrying the original request after success.
+- **Guard**: `src/app/core/guards/auth.guard.ts` protects routes. It checks `isAuthenticated()` and attempts a refresh before returning a redirect `UrlTree` to `/login` on failure.
+- **Login page**: `src/app/auth/login.component.ts` is a standalone reactive form. The success toast shows `firstName` (if returned by the API). It handles 400 responses like `{ message: 'Invalid credentials' }` and marks controls invalid.
+- **Access / Error pages**: `src/app/auth/access.ts` and `src/app/auth/error.ts` provide friendly Access Denied and Error pages and are routed as `/access` and `/error`.
+- **Floating configurator**: `src/app/components/app.floatingconfigurator.ts` and `src/app/components/app.configurator.ts` provide a small UI to toggle theme and presets; `src/app/service/layout.service.ts` manages layout state using Angular signals.
+- **Routes**: `src/app/app.routes.ts` includes protected routes (e.g. `/products`, `/cart` use `canActivate: [AuthGuard]`) and a wildcard route `{ path: '**', redirectTo: '/login' }` so client-side unknown paths redirect once the SPA is loaded.
+- **NgRx Cart**: `src/app/state/cart/*` implements cart actions/reducer/selectors; `CartEffects` persists the cart to `localStorage` and hydrates it on startup.
 
-Remaining tasks / suggestions
-- Run a full lint/build to catch any AOT/template warnings and fix them: `npm run build`.
-- Consider moving cart population (fetching `dummyjson` cart) into an NgRx Effect so side-effects are in the store layer.
-- Add persistence (localStorage) for the cart to keep user items across reloads.
-- Replace remaining `*ngIf`/`*ngFor` instances across the project with `@if`/`@for` if you want to fully remove deprecated usages (I can do this in a controlled sweep).
-- Visual polish: tune spacing, colors and border radii to precisely match the design — I can iterate on the cart CSS to reach pixel-perfect alignment.
+**Important behaviors**
+- Proactive refresh: when a token is issued the app schedules a refresh 60 seconds before expiry. This avoids most 401 race conditions.
+- Centralized refresh: `AuthService.performRefresh()` queues concurrent refresh callers so only one HTTP refresh runs at a time; the interceptor relies on this and retries requests automatically.
+- SSR safety: `AuthService` guards `localStorage` access with `isPlatformBrowser(...)` so server-side rendering or dev server processes won't crash when `localStorage` is unavailable.
+- Demo API notes: for the DummyJSON demo the client sends `expiresInMins` with login/refresh requests (default 60). The demo endpoint must honor that field for TTL control; in production you should implement a dedicated `/api/refresh` endpoint and prefer HttpOnly secure cookies for refresh tokens.
 
-Contact / next steps
-- Tell me which of the remaining tasks you'd like me to do next: run build and fix remaining template errors, move cart fetch into NgRx Effects, persist cart to localStorage, or fine-tune visual styles (I can apply exact spacing/colors).
+**Files / places to inspect**
+- Authentication: `src/app/core/auth.service.ts`, `src/app/core/interceptors/auth.interceptor.ts`, `src/app/core/guards/auth.guard.ts`
+- UI: `src/app/auth/login.component.ts`, `src/app/auth/access.ts`, `src/app/auth/error.ts`
+- Floating configurator: `src/app/components/app.floatingconfigurator.ts`, `src/app/components/app.configurator.ts`, `src/app/service/layout.service.ts`
+- Routes: `src/app/app.routes.ts`
+- NgRx cart: `src/app/state/cart/` and `src/app/cart/` components
 
----
-Generated/updated by the development agent working in this workspace.
+**Run & test**
+- Start dev server:
+```powershell
+npm start
+```
+- Try direct navigation (refresh) to a protected route like `/cart`:
+  - If you use `ng serve` the dev server handles SPA fallback and the router/guards will run.
+  - If you serve a production build with Express, ensure the server returns `index.html` for unknown paths (see `src/server.ts` pattern) so the SPA can boot and the guard can redirect.
