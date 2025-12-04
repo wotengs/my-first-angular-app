@@ -11,6 +11,7 @@
         <select
           aria-label="Category"
           class="form-select category-filter"
+          virtualScroll="true"
           (change)="onCategoryChange($any($event.target).value)"
         >
           <option value="">All</option>
