@@ -3,7 +3,11 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
   importProvidersFrom,
+  provideAppInitializer,
+  inject,
 } from '@angular/core';
+import { AuthService } from './core/auth.service';
+import { firstValueFrom } from 'rxjs';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { routes } from './app.routes';
@@ -85,6 +89,27 @@ export const appConfig: ApplicationConfig = {
           cssLayer: false,
         },
       },
+    }),
+    // initialize auth from storage on app bootstrap so reloads preserve sign-in
+    provideAppInitializer(async () => {
+      const auth = inject(AuthService);
+      try {
+        // hydrate token and schedule refresh if present
+        auth.initFromStorage();
+        // Attempt silent refresh only if we have a refresh token available.
+        // This avoids logging users out on reload when the access token is present but the demo token
+        // is not a parseable JWT and no refresh token exists.
+        const refreshToken = auth.getRefreshToken?.();
+        if (refreshToken) {
+          try {
+            await firstValueFrom(auth.performRefresh());
+          } catch {
+            // ignore refresh failure here — navigation guards will redirect on protected routes
+          }
+        }
+      } catch {
+        /* noop */
+      }
     }),
   ],
 };

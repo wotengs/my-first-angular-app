@@ -4,7 +4,7 @@
   [message]="productService.error()"
   (retry)="productService.retryLoad()"
 ></app-network-error>
-} @else if (productService.productItems().length == 0 && productService.loading()) {
+} @else { @if (productService.productItems().length == 0) { @if (productService.loading()) {
 <div class="products-grid">
   <img
     class="grid-loading"
@@ -25,7 +25,9 @@
   <div class="skeleton-card"></div>
   <div class="skeleton-card"></div>
 </div>
-} @else if (productService.productItems().length > 0 && !productService.loading()) {
+} @else {
+<div class="alert alert-info">No products found.</div>
+} } @else {
 <div class="products-grid">
   @for (product of productService.productItems(); track product.id) {
   <app-product-item
@@ -46,10 +48,7 @@
 
   @if (productService.total() == null || productService.productItems().length <
   (productService.total() ?? 0)) {
-  <button
-    class="btn btn-primary start-cta rounded-5 bi-arrow-90deg-down"
-    (click)="productService.loadMore()"
-  >
+  <button class="btn btn-primary start-cta rounded-5 bi-arrow-90deg-down" (click)="loadMore()">
     Load more
   </button>
   } @if (!(productService.total() == null || productService.productItems().length <
@@ -59,7 +58,12 @@
   </button>
   }
 </div>
-}
+
+@if (productService.loading()) {
+<div class="d-flex justify-content-center my-3">
+  <p-progressSpinner ariaLabel="Loading"></p-progressSpinner>
+</div>
+} } }
 
 <!-- Floating action buttons (create + and scroll-to-top) scoped to products page -->
 <div class="floating-controls" aria-hidden="false">

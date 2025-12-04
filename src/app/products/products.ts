@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ProductService } from '../services/products';
 import { Product } from '../model/product.type';
 import { catchError } from 'rxjs';
@@ -10,12 +10,17 @@ import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [ProductItem, NetworkErrorComponent],
+  imports: [ProductItem, NetworkErrorComponent, ProgressSpinnerModule],
   templateUrl: './products.html',
   styleUrls: ['./products.scss'],
 })
 export class Products implements OnInit {
   productService = inject(ProductService);
+
+  // Expose a small helper so templates can bind to loadMore()
+  loadMore() {
+    this.productService.loadMore();
+  }
 
   ngOnInit(): void {
     // initial load (default 30)
